@@ -19,6 +19,14 @@ exporters:
     tls:
       insecure: true
 
+  otlphttp:
+    endpoint: "https://seq/ingest/otlp/v1/logs" 
+    headers: 
+      X-Seq-ApiKey: "yshPmipNxorQ+zyGxzraXG9W7/ZoIq6YDU8zfTkUAXA="
+    tls: # Adicionado configuração TLS.
+      insecure: true # altere para false se o seq tiver um certificado válido.
+    
+
 processors:
   batch:
 
@@ -40,3 +48,7 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp]
