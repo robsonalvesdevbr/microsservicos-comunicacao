@@ -2,14 +2,13 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: 0.0.0.0:4317
 
 exporters:
   prometheus:
     endpoint: "0.0.0.0:8889"
     const_labels:
       label1: value1
-
-  logging:
 
   zipkin:
     endpoint: "http://zipkin-all-in-one:9411/api/v2/spans"
@@ -36,8 +35,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, zipkin, otlp]
+      exporters: [zipkin, otlp]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, prometheus]
+      exporters: [prometheus]
