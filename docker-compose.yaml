@@ -1,7 +1,13 @@
-version: '3'
 services:
   jaeger-all-in-one:
     image: jaegertracing/all-in-one:latest
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['GPU-58d3cb18-37a4-33a4-b11b-56dba48bfb15']
+              capabilities: ['gpu']
     restart: always
     ports:
       - "16686:16686"
@@ -10,6 +16,13 @@ services:
   
   zipkin-all-in-one:
     image: openzipkin/zipkin:latest
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['GPU-58d3cb18-37a4-33a4-b11b-56dba48bfb15']
+              capabilities: ['gpu']
     restart: always
     ports:
       - "9411:9411"
@@ -17,6 +30,13 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['GPU-58d3cb18-37a4-33a4-b11b-56dba48bfb15']
+              capabilities: ['gpu']
     restart: always
     volumes:
       - ./.docker/prometheus.yaml:/etc/prometheus/prometheus.yml
@@ -25,6 +45,13 @@ services:
 
   seq:
     image: datalust/seq:latest
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['GPU-58d3cb18-37a4-33a4-b11b-56dba48bfb15']
+              capabilities: ['gpu']
     container_name: seq
     restart: always
     ports:
@@ -37,6 +64,13 @@ services:
 
   otel-collector:
     image: otel/opentelemetry-collector:latest
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['GPU-58d3cb18-37a4-33a4-b11b-56dba48bfb15']
+              capabilities: ['gpu']
     restart: always
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
@@ -51,6 +85,13 @@ services:
 
   goapp:
     container_name: goapp
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['GPU-58d3cb18-37a4-33a4-b11b-56dba48bfb15']
+              capabilities: ['gpu']
     build:
       context: .
     environment:
@@ -75,6 +116,13 @@ services:
 
   goapp2:
     container_name: goapp2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['GPU-58d3cb18-37a4-33a4-b11b-56dba48bfb15']
+              capabilities: ['gpu']
     build:
       context: .
     environment:
@@ -99,6 +147,13 @@ services:
 
   goapp3:
     container_name: goapp3
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['GPU-58d3cb18-37a4-33a4-b11b-56dba48bfb15']
+              capabilities: ['gpu']
     build:
       context: .
     environment:
@@ -118,3 +173,14 @@ services:
       - prometheus
       - otel-collector
       - seq
+  
+  # test:
+  #   image: nvidia/cuda:12.3.1-base-ubuntu20.04
+  #   command: nvidia-smi
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]

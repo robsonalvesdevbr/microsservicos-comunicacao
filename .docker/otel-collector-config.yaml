@@ -5,26 +5,28 @@ receivers:
         endpoint: 0.0.0.0:4317
 
 exporters:
+  # Prometheus
   prometheus:
     endpoint: "0.0.0.0:8889"
     const_labels:
       label1: value1
 
+  # Zipkin
   zipkin:
     endpoint: "http://zipkin-all-in-one:9411/api/v2/spans"
     format: proto
 
+  # Jaeger
   otlp:
     endpoint: jaeger-all-in-one:4317
     tls:
       insecure: true
 
-  otlphttp:
-    endpoint: "https://seq/ingest/otlp/v1/logs" 
-    headers: 
-      X-Seq-ApiKey: "yshPmipNxorQ+zyGxzraXG9W7/ZoIq6YDU8zfTkUAXA="
-    tls: # Adicionado configuração TLS.
-      insecure: true # altere para false se o seq tiver um certificado válido.
+  # Seq
+  otlphttp/seq:
+    endpoint: http://seq:5341/ingest/otlp
+    tls:
+      insecure: true
     
 
 processors:
@@ -43,12 +45,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [zipkin, otlp]
+      exporters: [zipkin, otlp, otlphttp/seq]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus]
+      exporters: [prometheus, otlphttp/seq]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp]
+      exporters: [otlphttp/seq]
